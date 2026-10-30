@@ -412,11 +412,15 @@ body:not(.ready) .portrait{translate:0 40px}
       method:"POST",
       headers:{"Content-Type":"application/json","Accept":"application/json"},
       body:JSON.stringify({name:name,email:d.get("em"),message:d.get("msg"),_subject:"Portfolio inquiry from "+name,_replyto:d.get("em"),_template:"box",_captcha:"false"})
-    }).then(function(r){return r.json()}).then(function(r){
+    }).then(function(r){return r.json().catch(function(){return {success:false,message:"HTTP "+r.status}})}).then(function(r){
+      console.log("FormSubmit response:",r);
       if(r.success===true||r.success==="true"){f.reset();st.style.color="#8fe3a8";st.textContent="Thanks! Your message was sent. I'll get back to you soon.";}
-      else throw new Error("fail");
-    }).catch(function(){
-      st.style.color="#ff9b9b";st.textContent="Couldn't send right now. Opening your email app instead...";
+      else{var er=new Error(r.message||"Send failed");er.server=true;throw er;}
+    }).catch(function(err){
+      console.error("Form error:",err);
+      st.style.color="#ff9b9b";
+      if(err.server){st.textContent="Not sent: "+err.message;return;}
+      st.textContent="Couldn't send right now. Opening your email app instead...";
       setTimeout(function(){location.href="mailto:sameermustaqeem878@gmail.com?subject="+encodeURIComponent("Portfolio inquiry from "+name)+"&body="+encodeURIComponent(d.get("msg")+"\n\n"+d.get("em"))},900);
     }).then(function(){b.disabled=false;b.textContent="Send message"});
   });
