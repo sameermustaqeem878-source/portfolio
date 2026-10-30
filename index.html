@@ -323,7 +323,7 @@ body:not(.ready) .portrait{translate:0 40px}
     <p class="lede">Open to internships and junior software roles.</p>
     <div class="cgrid">
       <div class="dispatch"><span class="mono"><i class="dot" style="display:inline-block;margin-right:8px"></i>// Live dispatch node</span><h3>Let's build something exceptional.</h3><a class="mail" href="mailto:sameermustaqeem878@gmail.com">sameermustaqeem878@gmail.com</a><span class="mono">+92 316 2548839</span><div class="socials" style="justify-content:flex-start"><a class="btn alt" href="https://www.linkedin.com/in/m-sameer-mustaqeem-b1a436317" target="_blank" rel="noopener">LinkedIn</a><a class="btn alt" href="https://github.com/sameermustaqeem878-source" target="_blank" rel="noopener">GitHub</a></div></div>
-      <form class="cform" id="cform"><input name="fn" placeholder="First name" required><input name="ln" placeholder="Last name"><input class="full" name="em" type="email" placeholder="Email address" required><textarea class="full" name="msg" rows="4" placeholder="Tell me about your project" required></textarea><button class="btn main full" type="submit">Send message</button></form>
+      <form class="cform" id="cform"><input name="fn" placeholder="First name" required><input name="ln" placeholder="Last name"><input class="full" name="em" type="email" placeholder="Email address" required><textarea class="full" name="msg" rows="4" placeholder="Tell me about your project" required></textarea><input type="text" name="_honey" tabindex="-1" autocomplete="off" style="display:none"><button class="btn main full" type="submit">Send message</button><p class="full" id="cstatus" role="status" aria-live="polite" style="margin:0;font-size:13px;min-height:18px;color:var(--muted)"></p></form>
     </div>
     <div class="giant">Sameer</div>
   </section>
@@ -402,8 +402,24 @@ body:not(.ready) .portrait{translate:0 40px}
   // contact: ghost parallax + form
   var gh=document.getElementById("ghost"),cs=document.getElementById("contact");
   addEventListener("scroll",function(){gh.style.transform="translate(-50%,"+(cs.getBoundingClientRect().top*.25)+"px)"},{passive:true});
-  document.getElementById("cform").addEventListener("submit",function(e){e.preventDefault();var d=new FormData(e.target);
-    location.href="mailto:sameermustaqeem878@gmail.com?subject="+encodeURIComponent("Portfolio inquiry from "+d.get("fn")+" "+d.get("ln"))+"&body="+encodeURIComponent(d.get("msg")+"\n\n"+d.get("em"))});
+  document.getElementById("cform").addEventListener("submit",function(e){
+    e.preventDefault();
+    var f=e.target,d=new FormData(f),st=document.getElementById("cstatus"),b=f.querySelector("button");
+    if(d.get("_honey"))return;
+    var name=(d.get("fn")+" "+(d.get("ln")||"")).trim();
+    b.disabled=true;b.textContent="Sending...";st.textContent="";
+    fetch("https://formsubmit.co/ajax/sameermustaqeem878@gmail.com",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Accept":"application/json"},
+      body:JSON.stringify({name:name,email:d.get("em"),message:d.get("msg"),_subject:"Portfolio inquiry from "+name,_replyto:d.get("em"),_template:"box",_captcha:"false"})
+    }).then(function(r){return r.json()}).then(function(r){
+      if(r.success===true||r.success==="true"){f.reset();st.style.color="#8fe3a8";st.textContent="Thanks! Your message was sent. I'll get back to you soon.";}
+      else throw new Error("fail");
+    }).catch(function(){
+      st.style.color="#ff9b9b";st.textContent="Couldn't send right now. Opening your email app instead...";
+      setTimeout(function(){location.href="mailto:sameermustaqeem878@gmail.com?subject="+encodeURIComponent("Portfolio inquiry from "+name)+"&body="+encodeURIComponent(d.get("msg")+"\n\n"+d.get("em"))},900);
+    }).then(function(){b.disabled=false;b.textContent="Send message"});
+  });
 })();
 </script>
 
