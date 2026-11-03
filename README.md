@@ -2,7 +2,7 @@
 
 A responsive, single-page portfolio website for **Muhammad Sameer Mustaqeem**, a software engineering student focused on AI/ML, full-stack web development and mobile apps.
 
-🔗 **Live site:** [portfolio-sameer-3ebc.vercel.app](https://portfolio-sameer-3ebc.vercel.app)
+🔗 **Live site:** [portfolio-sameer-3ebc.vercel.app](https://m-sameer-mustaqeem-portfolio.vercel.app/)
 
 ---
 
